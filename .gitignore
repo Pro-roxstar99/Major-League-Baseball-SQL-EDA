@@ -1,0 +1,12 @@
+# MySQL Workbench Specific
+*.wbk
+*.mw
+connection.xml
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE settings (optional)
+.vscode/
+.idea/
