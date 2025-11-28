@@ -36,10 +36,6 @@ select sal.yearID,
         (lag(sum(sal.salary)) over(partition by sal.teamID order by sal.yearID))
         ,1) as salary_yoy_growth_pct
         
-<<<<<<< HEAD
-        
-=======
->>>>>>> feature/first-queries
 from salaries as sal
 group by 1,2
 order by 2,1
