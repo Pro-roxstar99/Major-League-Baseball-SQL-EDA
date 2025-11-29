@@ -94,3 +94,22 @@ order by school_rank;
 
 -- 4. For each decade, what were the names of the top 3 schools that produced the most players?
 
+with getting_decades as (
+	select floor(s.yearID/10)*10 as decade,
+				sd.name_full as school_name,
+            count(s.playerID) as num_of_players
+	from schools s
+    left join school_details sd
+    on s.schoolID = sd.schoolID
+    group by floor(s.yearID/10)*10, sd.name_full
+),
+top_schools_decade as (
+	select gd.decade,
+			gd.school_name,
+			dense_rank() over(partition by gd.decade order by gd.num_of_players desc, gd.school_name) as decade_ranker,
+            gd.num_of_players
+	from getting_decades gd
+)
+select tsd.*
+from top_schools_decade tsd
+where decade_ranker <= 3;
