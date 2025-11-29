@@ -71,3 +71,26 @@ left join school_details sd
 on s.schoolID = sd.schoolID
 group by floor(s.yearID/10)*10;
 
+-- 3. What are the names of the top 5 schools that produced the most players?
+
+with school_players_and_names as (
+			select 
+					s.schoolID as school_name,
+                    count(distinct s.playerID) as num_of_players
+            from schools s
+            group by s.schoolID
+),
+
+top_ranking_schools as (
+		select spn.school_name as name,
+                dense_rank() over(order by spn.num_of_players desc) as school_rank
+        from school_players_and_names spn
+)
+
+select trs.name, trs.school_rank
+from top_ranking_schools trs
+where school_rank <=5
+order by school_rank;
+
+-- 4. For each decade, what were the names of the top 3 schools that produced the most players?
+
