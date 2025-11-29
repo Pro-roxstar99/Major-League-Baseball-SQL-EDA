@@ -164,7 +164,29 @@ from cumulative_sum;
 
 -- 4. Return the first year that each team's cumulative spending surpassed 1 billion
 
--- select total_sales as (
--- 			select sal
---             from salaries sal
--- )
+with total_sales as (
+			select sal.yearID as year,
+					sal.teamID as team,
+                    sum(sal.salary) as total_salary_spending
+            from salaries sal
+            group by sal.yearID, sal.teamID
+),
+
+cumulative_sales as (
+		select ts.year as year, ts.team as team,
+				sum(ts.total_salary_spending) over(order by ts.total_salary_spending) as cumulative_salary_spending
+		from total_sales ts
+),
+
+first_billion as (
+		select cs.year as year, cs.team as team,
+				cs.cumulative_salary_spending,
+                row_number() over(partition by cs.team order by cs.cumulative_salary_spending) as billion_ranker
+		from cumulative_sales cs
+        where cs.cumulative_salary_spending > 1000000000
+)
+
+select *
+from first_billion
+where billion_ranker = 1
+order by year, team;
