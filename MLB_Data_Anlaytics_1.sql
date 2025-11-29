@@ -113,3 +113,58 @@ top_schools_decade as (
 select tsd.*
 from top_schools_decade tsd
 where decade_ranker <= 3;
+
+
+-- PART II: SALARY ANALYSIS
+-- 1. View the salaries table
+select *
+from salaries;
+
+-- 2. Return the top 20% of teams in terms of average annual spending
+
+with average_spending as (
+		select s.teamID as team,
+				sum(s.salary) as avg_salary_team
+        from salaries s
+        group by s.teamID
+),
+
+top_20_ntile as (
+		select avgs.team as team_name,
+				avg(avgs.avg_salary_team) as average_annual_spending,
+                ntile(5) over(order by avgs.avg_salary_team desc, avgs.team) as ranker
+        from average_spending avgs
+        group by avgs.team
+)
+
+select team_name, round(average_annual_spending/1000000000, 1) as annual_spending_in_billions
+from top_20_ntile
+where ranker = 1;
+
+
+-- 3. For each team, show the cumulative sum of spending over the years
+
+with total_sales as (
+		select sal.yearID as year,
+				sal.teamID as team,
+				sum(sal.salary) as total_salary
+		from salaries as sal
+        group by  sal.yearID, sal.teamID
+),
+
+cumulative_sum as (
+		select ts.year as year, ts.team as team,
+					round(sum(ts.total_salary) over(partition by ts.team order by ts.year)/1000000000, 1) as cumulative_sum_of_spending
+		from total_sales ts
+)
+select *
+from cumulative_sum;
+
+
+
+-- 4. Return the first year that each team's cumulative spending surpassed 1 billion
+
+-- select total_sales as (
+-- 			select sal
+--             from salaries sal
+-- )
