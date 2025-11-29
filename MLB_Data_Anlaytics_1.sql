@@ -70,3 +70,4 @@ from schools s
 left join school_details sd
 on s.schoolID = sd.schoolID
 group by floor(s.yearID/10)*10;
+

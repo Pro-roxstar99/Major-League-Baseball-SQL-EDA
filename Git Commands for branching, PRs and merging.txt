@@ -1,0 +1,49 @@
+Git Commands for branching, PRs and merging
+
+Step,Phase,Command / Action,Purpose
+
+1.Prep
+
+git checkout main
+git pull origin main
+
+Sync local main to ensure you start work from the absolute latest version.
+
+2.Branch
+
+git checkout -b feature/new-query-set
+
+3.Work (Make changes to your .sql files)
+
+4.Commit
+
+git add . 
+git commit -m feat: adding new set of analytical queries"
+
+Saves your work to the new feature branch's history.
+
+5.Push & Raise PR
+
+git push -u origin feature/new-query-set
+
+AFTER PR Review on Web
+
+6. Sync main
+
+git checkout main
+
+git pull origin main
+
+Downloads the merged changes from GitHub, making your local main up-to-date.
+
+7.Clean Up Local
+
+git branch -d feature/new-query-set
+
+Deletes the local feature branch.
+
+8.Clean Up Remote
+
+git push origin --delete feature/new-query-set
+
+Deletes the branch from GitHub, keeping the remote repository tidy.
