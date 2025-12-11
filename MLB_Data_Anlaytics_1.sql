@@ -224,9 +224,32 @@ from career_len;
 
 -- 3. What team did each player play on for their starting and ending years?
 
+select *
+from players;
 
+select *
+from salaries;
 
+select p.playerID, p.nameGiven as player_name,
+		s1.teamID as debut_team,
+        year(p.debut) as debut_year,
+		s2.teamID as final_team,
+        year(p.finalGame) as final_year
+from players p
+inner join salaries s1
+on p.playerID = s1.playerID and year(p.debut) = s1.yearID
+inner join salaries s2
+on p.playerID = s2.playerID and year(p.finalGame) = s2.yearID;
 
 
 -- 4. How many players started and ended on the same team and also played for over a decade?
 
+select p.playerID, p.nameGiven as player_name,
+		s1.teamID, abs(year(p.debut) - year(p.finalGame)) as career_len
+from players p
+inner join salaries s1
+on p.playerID = s1.playerID and year(p.debut) = s1.yearID
+
+inner join salaries s2
+on p.playerID = s2.playerID and year(p.finalGame) = s2.yearID
+where s1.teamID = s2.teamID and abs(s1.yearID - s2.yearID) >= 10;
