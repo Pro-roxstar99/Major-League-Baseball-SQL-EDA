@@ -241,3 +241,12 @@ on p.playerID = s2.playerID and year(p.finalGame) = s2.yearID;
 
 -- 4. How many players started and ended on the same team and also played for over a decade?
 
+select p.playerID, p.nameGiven as player_name,
+		s1.teamID, abs(year(p.debut) - year(p.finalGame)) as career_len
+from players p
+inner join salaries s1
+on p.playerID = s1.playerID and year(p.debut) = s1.yearID
+
+inner join salaries s2
+on p.playerID = s2.playerID and year(p.finalGame) = s2.yearID
+where s1.teamID = s2.teamID and abs(s1.yearID - s2.yearID) >= 10;
