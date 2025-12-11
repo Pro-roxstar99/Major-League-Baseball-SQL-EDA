@@ -230,11 +230,8 @@ from players;
 select *
 from salaries;
 
-select p.playerID, p.nameGiven as player_name,
-		s1.teamID as debut_team,
-        year(p.debut) as debut_year,
-		s2.teamID as final_team,
-        year(p.finalGame) as final_year
+select p.playerID, p.nameGiven as player_name, s1.teamID as debut_team, year(p.debut) as debut_year,
+		s2.teamID as final_team, year(p.finalGame) as final_year
 from players p
 inner join salaries s1
 on p.playerID = s1.playerID and year(p.debut) = s1.yearID
