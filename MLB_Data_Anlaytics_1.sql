@@ -122,19 +122,19 @@ from salaries;
 
 -- 2. Return the top 20% of teams in terms of average annual spending
 
-with average_spending as (
+with total_spending as (
 		select s.teamID as team,
-				sum(s.salary) as avg_salary_team
+				sum(s.salary) as total_spend -- total amount the team is spending
         from salaries s
         group by s.teamID
 ),
 
 top_20_ntile as (
-		select avgs.team as team_name,
-				avg(avgs.avg_salary_team) as average_annual_spending,
-                ntile(5) over(order by avgs.avg_salary_team desc, avgs.team) as ranker
-        from average_spending avgs
-        group by avgs.team
+		select tots.team as team_name,
+				avg(tots.total_spend) as average_annual_spending,
+                ntile(5) over(order by tots.total_spend desc, tots.team) as ranker
+        from total_spending tots
+        group by tots.team
 )
 
 select team_name, round(average_annual_spending/1000000000, 1) as annual_spending_in_billions
@@ -190,3 +190,43 @@ select *
 from first_billion
 where billion_ranker = 1
 order by year, team;
+
+
+-- PART III: PLAYER CAREER ANALYSIS
+-- 1. View the players table and find the number of players in the table
+select *
+from players;
+
+select count(distinct playerID) as num_of_players
+from players;
+
+-- 2. For each player, calculate their age at their first game, their last game, and their career length (all in years). Sort from longest career to shortest career.
+
+with player_info as (
+	select p.nameGiven as player_name,
+			round(datediff(debut, concat(birthYear,"-",birthMonth,"-",birthDay))/365.25) as age_debut_year,
+            round(datediff(finalGame, concat(birthYear,"-",birthMonth,"-",birthDay))/365.25) as age_final_year
+    from players p
+),
+
+career_len as (
+				select player_name,
+						age_debut_year,
+                        age_final_year,
+                        abs(age_debut_year-age_final_year) as career_length
+				from player_info
+)
+
+select *
+from career_len;
+
+
+
+-- 3. What team did each player play on for their starting and ending years?
+
+
+
+
+
+-- 4. How many players started and ended on the same team and also played for over a decade?
+
