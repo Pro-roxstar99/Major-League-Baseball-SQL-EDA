@@ -259,11 +259,31 @@ select *
 from players;
 
 -- TASK 2: Which players have the same birthday? Hint: Look into GROUP_CONCAT / LISTAGG / STRING_AGG [String Functions]
-select p1.playerID, p1.nameGiven
-from players p1
-inner join players p2
-on p1.playerID = p2.playerID
-where p1.birthMonth = p2.birthMonth and p1.birthDay = p2.birthDay;
+
+with birthdays as (
+	select cast(concat(birthYear,"-",birthMonth,"-",birthDay) as date) as birthday,
+		nameGiven
+    from players
+)
+
+select birthday, group_concat(nameGiven, ", ") as players_sharing_birthdays
+from birthdays
+where birthday is not null
+group by birthday
+order by birthday;
+
+-- If we wanted same DOB, without Year
+
+with dob as (
+		select concat(birthMonth,"-",birthDay) as dob, nameGiven
+        from players
+)
+
+select dob, group_concat(nameGiven, "") as player_sharing_dob
+from dob
+where dob is not NULL
+group by dob
+order by dob;
 
 -- 3. Create a summary table that shows for each team, what percent of players bat right, left and both
 
