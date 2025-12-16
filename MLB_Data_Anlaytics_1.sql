@@ -311,8 +311,25 @@ select num_of_players,
 from batting_count
 order by num_of_players;
 
-
-
-
-
 -- 4. How have average height and weight at debut game changed over the years, and what's the decade-over-decade difference?
+
+with avg_metrics as (
+	select floor(year(debut)/10)*10 as decade,
+			avg(height) as avg_height,
+            avg(weight) as avg_weight
+    from players
+    group by decade
+),
+
+decade_diff as (
+	select decade,
+			avg_height - lag(avg_height) over(order by decade) as height_diff,
+            avg_weight - lag(avg_weight) over(order by decade) as weight_diff
+    
+    from avg_metrics
+)
+
+select *
+from decade_diff
+where decade is not NULL;
+
