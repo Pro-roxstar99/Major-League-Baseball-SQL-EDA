@@ -250,3 +250,22 @@ on p.playerID = s1.playerID and year(p.debut) = s1.yearID
 inner join salaries s2
 on p.playerID = s2.playerID and year(p.finalGame) = s2.yearID
 where s1.teamID = s2.teamID and abs(s1.yearID - s2.yearID) >= 10;
+
+
+-- PART IV: PLAYER COMPARISON ANALYSIS
+
+-- TASK 1: View the players table
+select *
+from players;
+
+-- TASK 2: Which players have the same birthday? Hint: Look into GROUP_CONCAT / LISTAGG / STRING_AGG [String Functions]
+select p1.playerID, p1.nameGiven
+from players p1
+inner join players p2
+on p1.playerID = p2.playerID
+where p1.birthMonth = p2.birthMonth and p1.birthDay = p2.birthDay;
+
+-- 3. Create a summary table that shows for each team, what percent of players bat right, left and both
+
+
+-- 4. How have average height and weight at debut game changed over the years, and what's the decade-over-decade difference?
