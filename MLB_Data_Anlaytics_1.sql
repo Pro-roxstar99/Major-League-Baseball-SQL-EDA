@@ -258,6 +258,9 @@ where s1.teamID = s2.teamID and abs(s1.yearID - s2.yearID) >= 10;
 select *
 from players;
 
+select *
+from salaries;
+
 -- TASK 2: Which players have the same birthday? Hint: Look into GROUP_CONCAT / LISTAGG / STRING_AGG [String Functions]
 
 with birthdays as (
@@ -286,6 +289,30 @@ group by dob
 order by dob;
 
 -- 3. Create a summary table that shows for each team, what percent of players bat right, left and both
+
+with batting_count as (
+	select count(distinct s.playerID) as num_of_players,
+			s.teamID as teams,
+			sum(case when p.bats = "R" then 1 else 0 end) as right_handed,
+            sum(case when p.bats = "L" then 1 else 0 end) as left_handed,
+            sum(case when p.bats = "B" then 1 else 0 end) as both_handed
+	from players p
+    left join salaries s
+    on p.playerID = s.playerID
+    group by s.teamID
+    having count(distinct s.playerID) > 0
+)
+
+select num_of_players,
+		teams,
+        round((right_handed/num_of_players)*100, 1) as number_of_righties,
+        round((left_handed/num_of_players)*100, 1) as number_of_lefties,
+        round((both_handed/num_of_players)*100, 1) as number_of_both
+from batting_count
+order by num_of_players;
+
+
+
 
 
 -- 4. How have average height and weight at debut game changed over the years, and what's the decade-over-decade difference?
